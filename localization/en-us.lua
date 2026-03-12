@@ -401,6 +401,17 @@ return {
                     "{C:inactive,s:0.8}at the end of each round...{}"
                 },
             },
+            j_SM_Prospective = {
+                name = "Prospective Joker",
+                text = {
+                    "when a blind is defeated",
+                    "in the {C:attention}first{} hand of",
+                    "the round, increase by {C:attention}1{}",
+                    " all {C:attention}listed{} {C:green,E:1,S:1.1}probabilities{}",
+                    "otherwise resets",
+                    "{C:inactive}(ex:{} {C:green}1 in 3{} {C:inactive}->{} {C:green}2 in 3{}{C:inactive}){}"
+                },
+            },
         },
         Other = {
             SM_credits = {

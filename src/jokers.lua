@@ -1472,3 +1472,50 @@ SMODS.Joker {
         end
     end
 }
+
+---Prospective joker
+SMODS.Joker {
+    ---joker's name and info
+    key = 'Prospective',
+    blueprint_compat = true,
+    rarity = 2,
+    cost = 7,
+    --- for the custom sprite to be applied to the joker and the local variables
+    atlas = 'SciencefulJokers',
+    pos = {x = 0, y = 3},
+    config = { extra = { normalOdds = 1, oddsQuantity = 0 } },
+    loc_vars = function(self, info_queue, card)
+        return{vars = { card.ability.extra.normalOdds, card.ability.extra.oddsQuantity } }
+    end,
+
+    --- increase by 1 all listed probabilities when a blind is defeated in the 1st hand of the round, otherwise resets
+    calculate = function(self, card, context)
+
+        if context.after then
+            if SMODS.last_hand_oneshot and G.GAME.current_round.hands_played == 0 then
+                card.ability.extra.oddsQuantity = card.ability.extra.oddsQuantity + 1
+                return
+                {
+                    message = "+1 probability",
+                    colour = G.C.GREEN
+                } 
+            elseif card.ability.extra.oddsQuantity >= 1  then
+                card.ability.extra.oddsQuantity = 0
+                return
+                {
+                    message = localize('k_reset'),
+                    sound = 'tarot1',
+                    pitch = 1,
+                    colour = G.C.attention
+                }
+            end
+        end
+
+        if context.mod_probability and not context.blueprint then
+            return
+            {
+                numerator = context.numerator + (card.ability.extra.normalOdds * card.ability.extra.oddsQuantity)               
+            }
+        end
+    end
+}
