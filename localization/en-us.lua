@@ -404,7 +404,7 @@ return {
             j_SM_Prospective = {
                 name = "Prospective Joker",
                 text = {
-                    "when a blind is defeated",
+                    "When a blind is defeated",
                     "in the {C:attention}first{} hand of",
                     "the round, increase by {C:attention}1{}",
                     " all {C:attention}listed{} {C:green,E:1,S:1.1}probabilities{}",
