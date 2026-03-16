@@ -5,11 +5,12 @@ SMODS.Enhancement {
     pos = { x = 0, y = 0 },
     config = { extra = { odds = 5 } },
     loc_vars = function(self, info_queue, card)
-        return { vars = { G.GAME.probabilities.normal, card.ability.extra.odds } }
+        local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'SM_bloom_card')
+        return { vars = { numerator, denominator } }
     end,
     --- If the chance happens the copies that card and gives it a random Edition OR Seal
     calculate = function(self, card, context)
-        if context.main_scoring and context.cardarea == G.play and pseudorandom('bloom_card') < G.GAME.probabilities.normal / card.ability.extra.odds then
+        if context.main_scoring and context.cardarea == G.play and SMODS.pseudorandom_probability(card, 'SM_bloom_card', 1, card.ability.extra.odds) then
             G.playing_card = (G.playing_card and G.playing_card + 1) or 1
 
             local copy_card = copy_card(card, nil, nil, G.playing_card)
@@ -138,7 +139,8 @@ SMODS.Enhancement {
     config = { extra = { odds = 4, repetitions = 1 } },
 
     loc_vars = function(self, info_queue, card)
-        return { vars = { G.GAME.probabilities.normal, card.ability.extra.odds, card.ability.extra.repetitions } }
+        local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'SM_electro_card')
+        return { vars = { numerator, denominator, card.ability.extra.repetitions } }
     end,
     --- This enhancement retriggers the adjacent cards 1 time
 }
@@ -315,7 +317,8 @@ SMODS.Enhancement {
     always_scores = true,
     config = { extra = { Xchips = 1, Xmult = 1, odds = 3 } },
     loc_vars = function(self, info_queue, card)
-        return { vars = { card.ability.extra.Xchips, card.ability.extra.Xmult, G.GAME and G.GAME.probabilities.normal or 1, card.ability.extra.odds } }
+        local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'SM_purple_chemical_card')
+        return { vars = { card.ability.extra.Xchips, card.ability.extra.Xmult, numerator, denominator } }
     end,
     --- Xchips and Xmult effect when played, gains a random value if held in hand
     --- 1 in 3 chance to be destroyed after being used
@@ -340,7 +343,7 @@ SMODS.Enhancement {
         end
 
         if context.destroy_card and context.cardarea == G.play and context.destroy_card == card and
-            pseudorandom('SM_seed') < G.GAME.probabilities.normal / card.ability.extra.odds then
+            SMODS.pseudorandom_probability(card, 'SM_purple_chemical_card', 1, card.ability.extra.odds) then
             return {
                 remove = true,
                 message = localize('k_SM_dissolved'),
@@ -371,7 +374,9 @@ SMODS.Enhancement {
 
         local current_money = math.floor((G.GAME.dollars or 0) + (G.GAME.dollar_buffer or 0))/2
 
-        return { vars = { current_money, card.ability.percentage, G.GAME and G.GAME.probabilities.normal or 1, card.ability.extra.odds} }
+        local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'SM_cyan_chemical_card')
+
+        return { vars = { current_money, card.ability.percentage, numerator, denominator} }
     end,
     --- gives Xchips of the half of the current total money
     --- gives $ equal to the 5% of the total of chips of the current hand if held in hand
@@ -385,7 +390,7 @@ SMODS.Enhancement {
         end
 
         if context.end_of_round and context.game_over == false and context.cardarea == G.hand then
-            if pseudorandom('SM_seed') < G.GAME.probabilities.normal / card.ability.extra.odds then
+            if SMODS.pseudorandom_probability(card, 'SM_cyan_chemical_card', 1, card.ability.extra.odds) then
                 G.E_MANAGER:add_event(Event({
                     func = function()
                         -- This replicates the food destruction effect
@@ -438,7 +443,8 @@ SMODS.Enhancement {
     always_scores = true,
     config = { percentage = 5, extra = { odds = 4, Xmult = 1 } },
     loc_vars = function(self, info_queue, card)
-        return { vars = { card.ability.extra.Xmult, card.ability.percentage, G.GAME and G.GAME.probabilities.normal or 1, card.ability.extra.odds} }
+        local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'SM_brown_chemical_card')
+        return { vars = { card.ability.extra.Xmult, card.ability.percentage, numerator, denominator } }
     end,
     --- drains Xmult of the equal to the 5% of the current $
     --- gives $ equal to the 5% of the total of mult of the current hand
@@ -452,7 +458,7 @@ SMODS.Enhancement {
         end
 
         if context.cardarea == G.play and context.after then
-            if pseudorandom('SM_seed') < G.GAME.probabilities.normal / card.ability.extra.odds then
+            if SMODS.pseudorandom_probability(card, 'SM_brown_chemical_card', 1, card.ability.extra.odds) then
                 card.ability.extra.Xmult = 1
                 return {
                     message = localize('k_reset'),

@@ -388,12 +388,13 @@ SMODS.Joker {
     config = { extra = { odds = 4 } },
     loc_vars = function(self, info_queue, card)
         info_queue[#info_queue + 1] = G.P_CENTERS.m_stone
-        return{vars = { G.GAME and G.GAME.probabilities.normal or 1, card.ability.extra.odds }}
+        local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'SM_Paleontologist')
+        return{vars = { numerator, denominator }}
     end,
     ---Joker checks for if a stone card is played and each one played has a 1 in 4 chance to create a tarot card
     calculate = function(self, card, context)
         if context.individual and context.cardarea == G.play and #G.consumeables.cards + G.GAME.consumeable_buffer < G.consumeables.config.card_limit then
-            if SMODS.has_enhancement(context.other_card, "m_stone") and pseudorandom('SM_seed') < G.GAME.probabilities.normal / card.ability.extra.odds then
+            if SMODS.has_enhancement(context.other_card, "m_stone") and SMODS.pseudorandom_probability(card, 'SM_Paleontologist', 1, card.ability.extra.odds) then
                 G.GAME.consumeable_buffer = G.GAME.consumeable_buffer + 1
                 return {
                     extra = {
@@ -790,7 +791,7 @@ SMODS.Joker {
 ---Concentric joker
 SMODS.Joker {
     ---joker's name and info
-    key = 'ConcentricJoker',
+    key = 'Concentric',
     blueprint_compat = true,
     rarity = 1,
     cost = 5,
@@ -799,12 +800,13 @@ SMODS.Joker {
     pos = {x = 0, y = 2},
     config = { extra = { mult = 4, odds = 3 } },
     loc_vars = function(self, info_queue, card)
-        return{vars = { card.ability.extra.mult, card.ability.extra.mult * (G.jokers and #SMODS.Edition:get_edition_cards(G.jokers) or 0), (G.GAME and G.GAME.probabilities.normal or 1), card.ability.extra.odds }}
+        local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'SM_Concentric')
+        return{vars = { card.ability.extra.mult, card.ability.extra.mult * (G.jokers and #SMODS.Edition:get_edition_cards(G.jokers) or 0), numerator, denominator }}
     end,
     ---Joker gives +4 mult for each joker with an edition, after beating a boss blind 1 in a 3 chance to apply a random edition to a random joker
     calculate = function(self, card, context)
         if context.end_of_round and context.game_over == false and G.GAME.blind.boss and context.main_eval and not context.blueprint then
-            if pseudorandom('SM_seed') < G.GAME.probabilities.normal / card.ability.extra.odds then
+            if SMODS.pseudorandom_probability(card, 'SM_Concentric', 1, card.ability.extra.odds) then
                 local editionless_jokers = SMODS.Edition:get_edition_cards(G.jokers, true)
                 
                 local eligible_card = pseudorandom_element(editionless_jokers, pseudoseed("seed"))
@@ -1239,13 +1241,14 @@ SMODS.Joker {
     pos = {x = 6, y = 2},
     config = { extra = { odds = 3 } },
     loc_vars = function(self, info_queue, card)
-        return{vars = { G.GAME and G.GAME.probabilities.normal or 1, card.ability.extra.odds } }
+        local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'SM_TrialAndError')
+        return{vars = { numerator, denominator } }
     end,
 
     --- Unscored Playing Cards have a 1 in 2 chance to be destroyed
     calculate = function(self, card, context)
             if context.destroy_card and context.cardarea == "unscored" then
-                    if pseudorandom('SM_seed') < G.GAME.probabilities.normal / card.ability.extra.odds then
+                    if SMODS.pseudorandom_probability(card, 'SM_TrialAndError', 1, card.ability.extra.odds) then
                         return {
                             message = localize('k_SM_fail'),
                             colour = G.C.RED,
@@ -1388,7 +1391,8 @@ SMODS.Joker {
     pos = {x = 9, y = 2},
     config = { extra = { poker_hand = 'High Card', repetitions = 4, odds = 20 } },
     loc_vars = function(self, info_queue, card)
-        return{vars = { localize(card.ability.extra.poker_hand, 'poker_hands'), card.ability.extra.repetitions, G.GAME and G.GAME.probabilities.normal or 1, card.ability.extra.odds } }
+        local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'SM_PlutoniumRod')
+        return{vars = { localize(card.ability.extra.poker_hand, 'poker_hands'), card.ability.extra.repetitions, numerator, denominator } }
     end,
 
     ---If played hand is a High Card level up the played hand and retrigger all the played cards 4 additional times.
@@ -1409,7 +1413,7 @@ SMODS.Joker {
             }
         end
         if context.after and not context.blueprint then
-            if pseudorandom('SM_seed') < G.GAME.probabilities.normal / card.ability.extra.odds then
+            if SMODS.pseudorandom_probability(card, 'SM_PlutoniumRod', 1, card.ability.extra.odds) then
 
                 local randomVar = pseudorandom('SM_seed', 1, 10)
 

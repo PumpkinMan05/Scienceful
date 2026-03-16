@@ -294,7 +294,7 @@ return {
                     "at the end of the round",
                 },
             },
-            j_SM_ConcentricJoker = {
+            j_SM_Concentric = {
                 name = "Concentric Joker",
                 text = {
                     "{C:red}+#1#{} Mult for each {C:attention}Joker{}",
