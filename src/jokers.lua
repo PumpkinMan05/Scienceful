@@ -798,7 +798,7 @@ SMODS.Joker {
     --- for the custom sprite to be applied to the joker and the local variables
     atlas = 'SciencefulJokers',
     pos = {x = 0, y = 2},
-    config = { extra = { mult = 4, odds = 3 } },
+    config = { extra = { mult = 4, odds = 4 } },
     loc_vars = function(self, info_queue, card)
         local numerator, denominator = SMODS.get_probability_vars(card, 1, card.ability.extra.odds, 'SM_Concentric')
         return{vars = { card.ability.extra.mult, card.ability.extra.mult * (G.jokers and #SMODS.Edition:get_edition_cards(G.jokers) or 0), numerator, denominator }}
